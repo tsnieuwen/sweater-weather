@@ -39,6 +39,7 @@ group :development, :test do
   gem 'shoulda-matchers'
   gem 'simplecov'
   gem 'json'
+  gem 'figaro'
 end
 
 group :development do
