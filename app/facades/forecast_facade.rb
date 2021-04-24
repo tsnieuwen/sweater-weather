@@ -12,14 +12,15 @@ class ForecastFacade
     response = Faraday.get("https://api.openweathermap.org/data/2.5/onecall?lat=#{x}&lon=#{y}&appid=#{ENV['open_weather_key']}&exclude=minutely,alerts")
     body = JSON.parse(response.body, symbolize_names: true)
     self.current_weather(body)
+    self.daily_weather(body)
   end
 
   def self.current_weather(body)
     current_weather = body[:current]
-    OpenStruct.new({
-      datetime: current_weather[:dt],
-      sunrise: current_weather[:sunrise],
-      sunset: current_weather[:sunset],
+    o = OpenStruct.new({
+      datetime: Time.at(current_weather[:dt]).to_s,
+      sunrise: Time.at(current_weather[:sunrise]).to_s,
+      sunset: Time.at(current_weather[:sunset]).to_s,
       temperature: (1.8 * ((current_weather[:temp]) - 273.15) + 32).round(2),
       feels_like: (1.8 * ((current_weather[:feels_like]) - 273.15) + 32).round(2),
       humidity: current_weather[:humidity],
@@ -28,6 +29,21 @@ class ForecastFacade
       conditions: current_weather[:weather][0][:description],
       icon: current_weather[:weather][0][:icon]
       })
+  end
+
+  def self.daily_weather(body)
+    daily_weather = body[:daily][1..5]
+    array = daily_weather.map do |day_weather|
+      OpenStruct.new({
+        date: Time.at(day_weather[:dt]).strftime('%F'),
+        sunrise: Time.at(day_weather[:sunrise]).to_s,
+        sunset: Time.at(day_weather[:sunset]).to_s,
+        max_temp: (1.8 * ((day_weather[:temp][:max]) - 273.15) + 32).round(2),
+        min_temp: (1.8 * ((day_weather[:temp][:min]) - 273.15) + 32).round(2),
+        conditions: day_weather[:weather][0][:description],
+        icon: day_weather[:weather][0][:icon]
+        })
+    end
   end
 
 end
