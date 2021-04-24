@@ -40,6 +40,7 @@ group :development, :test do
   gem 'simplecov'
   gem 'json'
   gem 'figaro'
+  gem 'faraday'
 end
 
 group :development do
