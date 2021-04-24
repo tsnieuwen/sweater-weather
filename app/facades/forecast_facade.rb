@@ -13,6 +13,7 @@ class ForecastFacade
     body = JSON.parse(response.body, symbolize_names: true)
     self.current_weather(body)
     self.daily_weather(body)
+    self.hourly_weather(body)
   end
 
   def self.current_weather(body)
@@ -42,6 +43,18 @@ class ForecastFacade
         min_temp: (1.8 * ((day_weather[:temp][:min]) - 273.15) + 32).round(2),
         conditions: day_weather[:weather][0][:description],
         icon: day_weather[:weather][0][:icon]
+        })
+    end
+  end
+
+  def self.hourly_weather(body)
+    hourly_weather = body[:hourly][1..8]
+    array = hourly_weather.map do |hour_weather|
+      OpenStruct.new({
+        time: Time.at(hour_weather[:dt]).strftime('%T'),
+        temperature: (1.8 * ((hour_weather[:temp]) - 273.15) + 32).round(2),
+        conditions: hour_weather[:weather][0][:description],
+        icon: hour_weather[:weather][0][:icon]
         })
     end
   end
