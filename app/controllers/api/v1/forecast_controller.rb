@@ -1,7 +1,9 @@
 class Api::V1::ForecastController < ApplicationController
 
   def index
-    return_open_struct = ForecastFacade.coordinate_digest(params[:location])
+    @forecasts = ForecastFacade.return_forecasts(params[:location])
+    @serial = ForecastSerializer.new(@forecasts)
+    render json: @serial
   end
 
 end
