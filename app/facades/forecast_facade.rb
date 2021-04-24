@@ -1,24 +1,17 @@
 class ForecastFacade
 
-  def self.coordinate_digest(location)
-    response = Faraday.get("http://www.mapquestapi.com/geocoding/v1/address?key=#{ENV['mapquest_key']}&location=#{location}")
-    body = JSON.parse(response.body, symbolize_names: true)
-    lat = body[:results][0][:locations][0][:latLng][:lat]
-    long = body[:results][0][:locations][0][:latLng][:lng]
-    self.return_weather(lat, long)
-  end
-
-  def self.return_weather(x, y)
-    response = Faraday.get("https://api.openweathermap.org/data/2.5/onecall?lat=#{x}&lon=#{y}&appid=#{ENV['open_weather_key']}&exclude=minutely,alerts")
-    body = JSON.parse(response.body, symbolize_names: true)
-    self.current_weather(body)
-    self.daily_weather(body)
-    self.hourly_weather(body)
+  def self.return_forecasts(location)
+    body = ForecastService.coordinate_digest(location)
+    OpenStruct.new({
+      forecast: self.current_weather(body),
+      daily_weather: self.daily_weather(body),
+      hourly_weather: self.hourly_weather(body)
+      })
   end
 
   def self.current_weather(body)
     current_weather = body[:current]
-    o = OpenStruct.new({
+    OpenStruct.new({
       datetime: Time.at(current_weather[:dt]).to_s,
       sunrise: Time.at(current_weather[:sunrise]).to_s,
       sunset: Time.at(current_weather[:sunset]).to_s,
