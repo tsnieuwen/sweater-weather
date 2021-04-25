@@ -3,8 +3,8 @@ require 'rails_helper'
 describe "user registration" do
 
   it "returns happy path" do
-    balloons = SecureRandom.hex
-    post '/api/v1/users', params: {email: "Apples123@oranges.com", password: "HotelCalifornia", password_confirmation: "HotelCalifornia", api_key: balloons }
+  
+    post '/api/v1/users', params: {email: "Apples123@oranges.com", password: "HotelCalifornia", password_confirmation: "HotelCalifornia" }
 
     body = JSON.parse(response.body, symbolize_names: true)
 
@@ -19,7 +19,7 @@ describe "user registration" do
   it "returns sad path for email already exists" do
     existing_user = User.create(email: "tommy@turing.com", password: "TakeItEasy", password_confirmation: 'TakeItEasy', api_key: SecureRandom.hex)
 
-    post '/api/v1/users', params: {email: "tommy@turing.com", password: "HotelCalifornia", password_confirmation: "HotelCalifornia", api_key: SecureRandom.hex }
+    post '/api/v1/users', params: {email: "tommy@turing.com", password: "HotelCalifornia", password_confirmation: "HotelCalifornia" }
 
     body = JSON.parse(response.body, symbolize_names: true)
 
@@ -32,7 +32,7 @@ describe "user registration" do
 
   it "returns sad path for passwords don't match" do
 
-    post '/api/v1/users', params: {email: "tommy@turing.com", password: "HotelCalifornia", password_confirmation: "TakeItEasy", api_key: SecureRandom.hex }
+    post '/api/v1/users', params: {email: "tommy@turing.com", password: "HotelCalifornia", password_confirmation: "TakeItEasy"}
 
     body = JSON.parse(response.body, symbolize_names: true)
 
