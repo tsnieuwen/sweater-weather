@@ -41,6 +41,7 @@ group :development, :test do
   gem 'json'
   gem 'figaro'
   gem 'faraday'
+  gem 'vcr'
 end
 
 group :development do
