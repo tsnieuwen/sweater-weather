@@ -20,12 +20,10 @@ describe "forecast return happy path" do
   it "returns current weather data" do
     VCR.use_cassette('taunton_forecast') do
       get '/api/v1/forecast', params: {location: "taunton,ma" }
-      expect(response).to be_successful
 
       body = JSON.parse(response.body, symbolize_names: true)
 
       expect(body[:data][:attributes][:current_weather].keys).to eq([:datetime, :sunrise, :sunset, :temperature, :feels_like, :humidity, :uvi, :visibility, :conditions, :icon])
-
       expect(body[:data][:attributes][:current_weather][:datetime]).to be_a(String)
       expect(body[:data][:attributes][:current_weather][:sunrise]).to be_a(String)
       expect(body[:data][:attributes][:current_weather][:sunset]).to be_a(String)
@@ -42,7 +40,6 @@ describe "forecast return happy path" do
   it "returns daily weather data" do
     VCR.use_cassette('taunton_forecast') do
       get '/api/v1/forecast', params: {location: "taunton,ma" }
-      expect(response).to be_successful
 
       body = JSON.parse(response.body, symbolize_names: true)
 
@@ -62,11 +59,16 @@ describe "forecast return happy path" do
   it "returns hourly weather data" do
     VCR.use_cassette('taunton_forecast') do
       get '/api/v1/forecast', params: {location: "taunton,ma" }
-      expect(response).to be_successful
 
       body = JSON.parse(response.body, symbolize_names: true)
+
       expect(body[:data][:attributes][:hourly_weather].size).to eq(8)
-      require "pry"; binding.pry
+      expect(body[:data][:attributes][:hourly_weather][0]).to be_a(Hash)
+      expect(body[:data][:attributes][:hourly_weather][0].keys).to eq([:time, :temperature, :conditions, :icon])
+      expect(body[:data][:attributes][:hourly_weather][0][:time]).to be_a(String)
+      expect(body[:data][:attributes][:hourly_weather][0][:temperature]).to be_a(Float)
+      expect(body[:data][:attributes][:hourly_weather][0][:conditions]).to be_a(String)
+      expect(body[:data][:attributes][:hourly_weather][0][:icon]).to be_a(String)
     end
   end
 
