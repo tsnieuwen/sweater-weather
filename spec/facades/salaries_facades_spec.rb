@@ -21,5 +21,12 @@ RSpec.describe SalariesFacade do
 
       expect(output).to eq("example.com")
     end
+
+    # it "::find_salaries_link" do
+    #   body = {_links: {:"ua:salaries" {href: "hello"}}}
+    #   output = SalariesFacade.find_salaries_link(body)
+    #   expect(output).to eq("hello")
+    # end
+
   end
 end
