@@ -3,9 +3,8 @@ require 'rails_helper'
 describe "return happy path" do
 
   it "return happy path" do
-      get '/api/v1/salaries', params: {destination: "denver" }
+      get '/api/v1/salaries', params: {destination: "Denver" }
       expect(response).to be_successful
-      require "pry"; binding.pry
       body = JSON.parse(response.body, symbolize_names: true)
 
       # expect(body[:data][:attributes].keys).to eq([:current_weather, :daily_weather, :hourly_weather])
