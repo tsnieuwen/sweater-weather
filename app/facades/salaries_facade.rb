@@ -7,9 +7,24 @@ class SalariesFacade
     slug_denver = SalariesService.hit_api_slug(link)
     salaries_link = self.find_salaries_link(slug_denver)
     salaries_body = SalariesService.hit_api_salaries(salaries_link)
-    salaries = self.salaries_array(salaries_body)
-    require "pry"; binding.pry
+    # salaries = self.salaries_array(salaries_body)
+    OpenStruct.new({
+      id: nil,
+      destination: destination,
+      forecast: self.forecast(destination),
+      salaries: self.salaries_array(salaries_body)
+      })
   end
+
+  def self.forecast(destination)
+    body = ForecastService.coordinate_digest(destination)
+    hash = Hash.new
+    require "pry"; binding.pry
+    hash[:summary] = body[:current][:weather][0][:description].capitalize
+    hash[:temperature] = "#{(1.8 * ((body[:current][:temp]) - 273.15) + 32).to_i} F"
+    hash
+  end
+
 
   def self.find_urban_area(city_array, destination)
     link = nil

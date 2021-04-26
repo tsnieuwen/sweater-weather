@@ -8,6 +8,8 @@ class Api::V1::SalariesController < ApplicationController
 
   def index
     @salaries = SalariesFacade.return(params[:destination])
+    @serial = SalariesSerializer.new(@salaries)
+    render json: @serial
   end
 
 end
