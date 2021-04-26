@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       resources :image, only: [:index]
       resources :users, only: [:create]
       resources :sessions, only: [:create]
+      resources :salaries, only: [:index]
     end
   end
 
