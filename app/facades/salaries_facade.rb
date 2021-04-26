@@ -19,7 +19,6 @@ class SalariesFacade
   def self.forecast(destination)
     body = ForecastService.coordinate_digest(destination)
     hash = Hash.new
-    require "pry"; binding.pry
     hash[:summary] = body[:current][:weather][0][:description].capitalize
     hash[:temperature] = "#{(1.8 * ((body[:current][:temp]) - 273.15) + 32).to_i} F"
     hash
