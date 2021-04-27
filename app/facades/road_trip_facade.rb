@@ -2,15 +2,20 @@ class RoadTripFacade
 
   def self.return(origin, destination)
     body = RoadTripService.directions(origin, destination)
-    arrival_time = self.arrival_time(body)
-    forecast = RoadTripFacade.destination_forecast(destination)
-    o = OpenStruct.new({
-      id: nil,
-      start_city: origin,
-      end_city: destination,
-      travel_time: self.formatted_travel_time(body),
-      weather_at_eta: self.weather_call(body, forecast)
-      })
+    if body == nil
+      nil
+    elsif body == "We are unable to route with the given locations."
+      "We are unable to route with the given locations."
+    else
+      forecast = RoadTripFacade.destination_forecast(destination)
+      OpenStruct.new({
+        id: nil,
+        start_city: origin,
+        end_city: destination,
+        travel_time: self.formatted_travel_time(body),
+        weather_at_eta: self.weather_call(body, forecast)
+        })
+    end
   end
 
   def self.trip_time_seconds(body)

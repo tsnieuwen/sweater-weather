@@ -1,13 +1,16 @@
 class ForecastFacade
 
   def self.return_forecasts(location)
-    body = ForecastService.coordinate_digest(location)
-    o = OpenStruct.new({
-      id: nil,
-      current_weather: self.current_weather(body),
-      daily_weather: self.daily_weather(body),
-      hourly_weather: self.hourly_weather(body)
-      })
+    if body = ForecastService.coordinate_digest(location)
+      o = OpenStruct.new({
+        id: nil,
+        current_weather: self.current_weather(body),
+        daily_weather: self.daily_weather(body),
+        hourly_weather: self.hourly_weather(body)
+        })
+    else
+      nil
+    end
   end
 
   def self.current_weather(body)
