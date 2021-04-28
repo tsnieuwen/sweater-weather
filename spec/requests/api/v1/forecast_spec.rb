@@ -30,7 +30,7 @@ describe "forecast return happy path" do
       expect(body[:data][:attributes][:current_weather][:temperature]).to be_a(Float)
       expect(body[:data][:attributes][:current_weather][:feels_like]).to be_a(Float)
       expect(body[:data][:attributes][:current_weather][:humidity]).to be_a(Integer)
-      expect(body[:data][:attributes][:current_weather][:uvi]).to be_a(Integer)
+      expect(body[:data][:attributes][:current_weather][:uvi]).to be_a(Float)
       expect(body[:data][:attributes][:current_weather][:visibility]).to be_a(Integer)
       expect(body[:data][:attributes][:current_weather][:conditions]).to be_a(String)
       expect(body[:data][:attributes][:current_weather][:icon]).to be_a(String)
@@ -72,4 +72,33 @@ describe "forecast return happy path" do
     end
   end
 
+end
+
+describe "forecast return sad path" do
+
+  it "input location doesn't exist" do
+    VCR.use_cassette('forecast_non_existent_location') do
+      get '/api/v1/forecast', params: {location: "sadfasdfsdfsdfasdfsfr213123sdf" }
+      expect(response.status).to eq(400)
+
+      body = JSON.parse(response.body, symbolize_names: true)
+      expect(body.keys).to eq([:data])
+      expect(body[:data]).to be_a(Hash)
+      expect(body[:data].keys).to eq([:error])
+      expect(body[:data][:error]).to eq("Please enter a valid location")
+    end
+  end
+
+  it "input location is blank" do
+    VCR.use_cassette('forecast_blank_location') do
+      get '/api/v1/forecast', params: {location: "" }
+      expect(response.status).to eq(400)
+
+      body = JSON.parse(response.body, symbolize_names: true)
+      expect(body.keys).to eq([:data])
+      expect(body[:data]).to be_a(Hash)
+      expect(body[:data].keys).to eq([:error])
+      expect(body[:data][:error]).to eq("Please enter a valid location")
+    end
+  end
 end

@@ -5,7 +5,11 @@ class ForecastService
     body = JSON.parse(response.body, symbolize_names: true)
     lat = body[:results][0][:locations][0][:latLng][:lat]
     long = body[:results][0][:locations][0][:latLng][:lng]
-    self.return_weather(lat, long)
+    if lat == 39.390897 && long == -99.066067
+      nil
+    else
+      self.return_weather(lat, long)
+    end
   end
 
   def self.return_weather(x, y)
