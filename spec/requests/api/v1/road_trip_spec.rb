@@ -57,7 +57,7 @@ describe "roadtrip happy path" do
 
       existing_user1 = User.create(email: "tommy@turing.com", password: "TakeItEasy", password_confirmation: 'TakeItEasy', api_key: "jgn983hy48thw9begh98h4539h4")
       existing_user2 = User.create(email: "bill@turing.com", password: "HotelCalifornia", password_confirmation: 'HotelCalifornia', api_key: "lifeinthefastlane123")
-      post '/api/v1/road_trip', params: {origin: "Taunton,MA", destination: "Sacramento,CA", api_key: "jgn983hy48thw9begh98h4539h4"}
+      post '/api/v1/road_trip', params: {origin: "Taunton,MA", destination: "Chicago,IL", api_key: "jgn983hy48thw9begh98h4539h4"}
 
       body = JSON.parse(response.body, symbolize_names: true)
 
@@ -81,7 +81,7 @@ end
 describe "roadtrip sad paths" do
 
   it "returns error when input api key doesn't exist in users db" do
-    VCR.use_cassette('roadtrip_sad_path_1') do
+    VCR.use_cassette('roadtrip_sad_path_one') do
 
       existing_user1 = User.create(email: "tommy@turing.com", password: "TakeItEasy", password_confirmation: 'TakeItEasy', api_key: "jgn983hy48thw9begh98h4539h4")
       existing_user2 = User.create(email: "bill@turing.com", password: "HotelCalifornia", password_confirmation: 'HotelCalifornia', api_key: "lifeinthefastlane123")
@@ -98,7 +98,7 @@ describe "roadtrip sad paths" do
   end
 
   it "returns error when no api key is provided" do
-    VCR.use_cassette('roadtrip_sad_path_2') do
+    VCR.use_cassette('roadtrip_sad_path_two') do
 
       existing_user1 = User.create(email: "tommy@turing.com", password: "TakeItEasy", password_confirmation: 'TakeItEasy', api_key: "jgn983hy48thw9begh98h4539h4")
       existing_user2 = User.create(email: "bill@turing.com", password: "HotelCalifornia", password_confirmation: 'HotelCalifornia', api_key: "lifeinthefastlane123")
@@ -111,6 +111,85 @@ describe "roadtrip sad paths" do
       expect(body[:data]).to be_a(Hash)
       expect(body[:data].keys).to eq([:error])
       expect(body[:data][:error]).to eq("You are not able to access this feature")
+    end
+  end
+
+  it "returns error when origin is not entered" do
+    VCR.use_cassette('roadtrip_sad_path_no_origin') do
+
+      existing_user1 = User.create(email: "tommy@turing.com", password: "TakeItEasy", password_confirmation: 'TakeItEasy', api_key: "jgn983hy48thw9begh98h4539h4")
+      existing_user2 = User.create(email: "bill@turing.com", password: "HotelCalifornia", password_confirmation: 'HotelCalifornia', api_key: "lifeinthefastlane123")
+      post '/api/v1/road_trip', params: {destination: "Colorado Springs,CO", api_key: "jgn983hy48thw9begh98h4539h4"}
+
+      body = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+      expect(body[:data]).to be_a(Hash)
+      expect(body[:data].keys).to eq([:error])
+      expect(body[:data][:error]).to eq("Please enter valid origin and destination points")
+    end
+  end
+
+  it "returns error when destination is not entered" do
+    VCR.use_cassette('roadtrip_sad_path_no_origin') do
+
+      existing_user1 = User.create(email: "tommy@turing.com", password: "TakeItEasy", password_confirmation: 'TakeItEasy', api_key: "jgn983hy48thw9begh98h4539h4")
+      existing_user2 = User.create(email: "bill@turing.com", password: "HotelCalifornia", password_confirmation: 'HotelCalifornia', api_key: "lifeinthefastlane123")
+      post '/api/v1/road_trip', params: {origin: "Colorado Springs,CO", api_key: "jgn983hy48thw9begh98h4539h4"}
+
+      body = JSON.parse(response.body, symbolize_names: true)
+
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+      expect(body[:data]).to be_a(Hash)
+      expect(body[:data].keys).to eq([:error])
+      expect(body[:data][:error]).to eq("Please enter valid origin and destination points")
+    end
+  end
+
+  it "returns error when origin is not valid" do
+    VCR.use_cassette('sad_path_invalid_origin') do
+
+      existing_user1 = User.create(email: "hank@turing.com", password: "TakeItEasy", password_confirmation: 'TakeItEasy', api_key: "jgn983hy48thw9begh98h4539h4")
+      post '/api/v1/road_trip', params: {origin: "asdfsdf2134123asdfasdf123123", destination: "Denver,CO", api_key: "jgn983hy48thw9begh98h4539h4"}
+
+      body = JSON.parse(response.body, symbolize_names: true)
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+      expect(body[:data]).to be_a(Hash)
+      expect(body[:data].keys).to eq([:error])
+      expect(body[:data][:error]).to eq("Please enter valid origin and destination points")
+    end
+  end
+
+  it "returns error when destination is not valid" do
+    VCR.use_cassette('sad_path_invalid_destination') do
+
+      existing_user1 = User.create(email: "hank@turing.com", password: "TakeItEasy", password_confirmation: 'TakeItEasy', api_key: "jgn983hy48thw9begh98h4539h4")
+      post '/api/v1/road_trip', params: {origin: "Denver,CO", destination: "asdfsdf2134123asdfasdf123123", api_key: "jgn983hy48thw9begh98h4539h4"}
+
+      body = JSON.parse(response.body, symbolize_names: true)
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+      expect(body[:data]).to be_a(Hash)
+      expect(body[:data].keys).to eq([:error])
+      expect(body[:data][:error]).to eq("Please enter valid origin and destination points")
+    end
+  end
+
+  it "returns error when trip is impossible" do
+    VCR.use_cassette('sad_path_invalid_trip') do
+
+      existing_user1 = User.create(email: "hank@turing.com", password: "TakeItEasy", password_confirmation: 'TakeItEasy', api_key: "jgn983hy48thw9begh98h4539h4")
+      post '/api/v1/road_trip', params: {origin: "Denver,CO", destination: "London", api_key: "jgn983hy48thw9begh98h4539h4"}
+
+      body = JSON.parse(response.body, symbolize_names: true)
+      expect(response).to_not be_successful
+      expect(response.status).to eq(400)
+      expect(body[:data]).to be_a(Hash)
+      expect(body[:data].keys).to eq([:error])
+      expect(body[:data][:error]).to eq("We are unable to route with the given locations.")
     end
   end
 
