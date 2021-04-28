@@ -1,4 +1,4 @@
-class Api::V1::ImageController < ApplicationController
+class Api::V1::BackgroundController < ApplicationController
 
   def index
     if params[:location] == ""
@@ -7,7 +7,7 @@ class Api::V1::ImageController < ApplicationController
       @image = ImageFacade.return_image(params[:location])
       @serial = ImageSerializer.new(@image)
       render json: @serial
-    end 
+    end
   end
 
 end
