@@ -4,7 +4,7 @@ describe "image return happy paths" do
 
   it "returns image data per spec" do
     VCR.use_cassette('taunton_image') do
-      get '/api/v1/image', params: {location: "taunton,ma" }
+      get '/api/v1/background', params: {location: "taunton,ma" }
 
       body = JSON.parse(response.body, symbolize_names: true)
 
@@ -27,7 +27,7 @@ describe "image return sad paths" do
 
   it "returns if image search is blank" do
     VCR.use_cassette('taunton_image') do
-      get '/api/v1/image', params: {location: "" }
+      get '/api/v1/background', params: {location: "" }
 
       body = JSON.parse(response.body, symbolize_names: true)
 
